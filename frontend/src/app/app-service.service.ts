@@ -16,7 +16,6 @@ export class AppServiceService {
       this.ROOT_URL = 'api'
     }
   }
-  
 
   initializeDB(){
     return this.http.get(`/${this.ROOT_URL}/dbinitialize`)
