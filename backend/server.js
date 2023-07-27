@@ -1,30 +1,139 @@
-const sqlite3 = require('sqlite3').verbose();
+const express = require ("express");
 
-let _DBConnection;
+const {
+  readTeachers,
+  readStudents,
+  addStudent,
+  addTeacher,
+  deleteTeacher,
+  deleteStudent,
+  readStudentInfo,
+  readTeacherInfo,
+  updateStudent,
+  updateTeacher,
+  dbinitialize
+} = require ("./database.js");
 
-const connectDatabase = async () => {
+const app = express();
+const bodyParser = require  ("body-parser");
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-  if (process.env.NODE_ENV === "test" || process.env.NODE_ENV === "test-backend") {
-      return new sqlite3.Database(":memory:", sqlite3.OPEN_READWRITE);
-  } else {
-    return new sqlite3.Database('./db.sqlite', sqlite3.OPEN_READWRITE);
-  }
-}
+app.get("/dbinitialize", async function (req, res) {
+  console.log("DB is getting initialized");
+  let data = await dbinitialize();
 
-const getDbConnection = async () => {
-  if (!_DBConnection) {
-    _DBConnection = await connectDatabase();
-  }
-  return _DBConnection;
-};
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+// ============== Teacher Related endpoints ==============
 
-const closeConnection = conn => {
-  if (conn) {
-    return conn.close();
-  }
-};
+app.get("/listTeachers", async function (req, res) {
+  console.log("Request received to list teachers");
+  let data = await readTeachers();
 
-module.exports = {
-  getDbConnection,
-  closeConnection
-};
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+app.post("/getTeacherInfo", async function (req, res) {
+  let reqBody = req.body;
+  console.log("Request received to get Teacher Info");
+  let data = await readTeacherInfo(reqBody.id);
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+app.post("/addTeacher", async function (req, res) {
+  let reqBody = req.body;
+  console.log(
+    "Request received to add teacher. Req body: " + JSON.stringify(reqBody)
+  );
+  let data = await addTeacher(reqBody.id, reqBody.name, reqBody.age);
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+app.post("/editTeacher", async function (req, res) {
+  let reqBody = req.body;
+  console.log(
+    "Request received to update teacher. Req body: " + JSON.stringify(reqBody)
+  );
+  let data = await updateTeacher(reqBody.name,reqBody.age,reqBody.id);
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+app.post("/deleteTeacher", async function (req, res) {
+  let reqBody = req.body;
+  console.log(
+    "Request received to delete teacher. Req body: " + JSON.stringify(reqBody)
+  );
+  let data = await deleteTeacher(reqBody.id);
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+// ============== Student Related endpoints ==============
+
+app.get("/listStudents", async function (req, res) {
+  console.log("Request received to list students");
+  let data = await readStudents();
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+app.post("/getStudentInfo", async function (req, res) {
+  let reqBody = req.body;
+  console.log("Request received to get Student Info");
+  let data = await readStudentInfo(reqBody.id);
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+app.post("/addStudent", async function (req, res) {
+  let reqBody = req.body;
+  console.log(
+    "Request received to add student. Req body: " + JSON.stringify(reqBody)
+  );
+  let data = await addStudent(
+    reqBody.id,
+    reqBody.name,
+    reqBody.age,
+    reqBody.hometown
+  );
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+app.post("/deleteStudent", async function (req, res) {
+  let reqBody = req.body;
+  console.log(
+    "Request received to delete student. Req body: " + JSON.stringify(reqBody)
+  );
+  let data = await deleteStudent(reqBody.id);
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+
+app.post("/editStudent", async function (req, res) {
+  let reqBody = req.body;
+  console.log(
+    "Request received to update Student. Req body: " + JSON.stringify(reqBody)
+  );
+  let data = await updateStudent(reqBody.name,reqBody.age,reqBody.hometown,reqBody.id);
+
+  res.setHeader("Content-Type", "application/json");
+  res.end(JSON.stringify(data));
+});
+
+module.exports = app;
