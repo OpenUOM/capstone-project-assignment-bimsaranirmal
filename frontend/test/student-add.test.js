@@ -4,15 +4,7 @@ process.env.NODE_ENV = "test";
 fixture`Testing Student UI`
     .page`http://localhost:4401/student`
 
-
-fixture('Example Fixture')
-  .page('http://localhost:4401/student')
-  .beforeEach(async (t) => {
-    // Set a higher page request timeout
-    await t.setPageLoadTimeout(60000);
-  });
-
-  test('Testing add students', async t => {
+test('Testing add students', async t => {
 
     await t.navigateTo("/dbinitialize");
 
@@ -21,8 +13,8 @@ fixture('Example Fixture')
     await t.typeText("#student-name", "Pasindu Basnayaka");
     await t.typeText("#student-age", "45");
     await t.typeText("#student-Hometown", "Catholic");
-    await t.click("#student-add"); 
- 
+    await t.click("#student-add");
+
     await t.navigateTo("/student");
 
     const table = Selector('#student-table')
