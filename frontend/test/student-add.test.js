@@ -4,7 +4,15 @@ process.env.NODE_ENV = "test";
 fixture`Testing Student UI`
     .page`http://localhost:4401/student`
 
-test('Testing add students', async t => {
+
+fixture('Example Fixture')
+  .page('http://localhost:4401/student')
+  .beforeEach(async (t) => {
+    // Set a higher page request timeout
+    await t.setPageLoadTimeout(60000);
+  });
+
+  test('Testing add students', async t => {
 
     await t.navigateTo("/dbinitialize");
 
