@@ -10,7 +10,7 @@ permissions:
 jobs:
   build:
     name: Autograding
-    runs-on: ubuntu-latest
+    runs-on: Windows
     steps:
       - uses: actions/setup-node@v3
         with: 
